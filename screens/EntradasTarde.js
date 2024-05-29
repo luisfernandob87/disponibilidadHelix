@@ -38,7 +38,7 @@ const EntradasTarde = () => {
   const [dataPuesto, setDataPuesto] = useState([]);
   const [scrollEnabled, setScrollEnabled] = useState(false);
 
-  const page = "https://llamadasdeatencionbackend-rucz-dev.fl0.io";
+  const page = "https://servicedesk-dev-is.onbmc.com";
 
   useEffect(() => {
     getMultiple = async () => {
@@ -47,56 +47,36 @@ const EntradasTarde = () => {
         values = await AsyncStorage.multiGet(["token", "userName"]);
       } catch (e) { }
       const token = values[0][1];
+      const userName = values[1][1];
+      console.log(token);
+      console.log(userName);
+
       const config = {
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: + token,
         },
       };
       axios
         .get(
-          `${page}/api/empleados?filters[estado][$eq]=true`,
+          `${page}/api/arsys/v1.0/entry/CTM:People`,
           config
         )
-        .then((res) => {
+        .then((res) => 
+          {
           let newArray = res.data.data.map((item) => {
             return { key: item.id, value: item.attributes.nombreCompleto };
           });
           setData(newArray);
+
         })
         .catch(function (error) {
           console.log(error);
         });
-      axios
-        .get(
-          `${page}/api/departamentos?filters[estado][$eq]=true`,
-          config
-        )
-        .then((res) => {
-          let newArray = res.data.data.map((item) => {
-            return { key: item.id, value: item.attributes.descripcion };
-          });
-          setDataDepto(newArray);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      axios
-        .get(
-          `${page}/api/puestos?filters[estado][$eq]=true`,
-          config
-        )
-        .then((res) => {
-          let newArray = res.data.data.map((item) => {
-            return { key: item.id, value: item.attributes.descripcion };
-          });
-          setDataPuesto(newArray);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      
     };
     getMultiple();
-  }, []);
+  }
+  , []);
 
   const [firmaColaborador, setFirmaColaborador] = useState("");
   const [firmaJefe, setFirmaJefe] = useState("");
