@@ -40,7 +40,7 @@ function MyStack() {
         name="EntradasTarde"
         component={EntradasTarde}
         options={{
-          title: "Registrar Entrada Tarde",
+          title: "Habilitar o Deshabilitar",
           headerTitleAlign: "center",
           headerTintColor: "#1976d2",
         }}

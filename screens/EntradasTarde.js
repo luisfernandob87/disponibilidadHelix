@@ -58,17 +58,19 @@ const EntradasTarde = () => {
       };
       axios
         .get(
-          `${page}/api/arsys/v1.0/entry/CTM:People`,
+          `${page}/api/arsys/v1.0/entry/CTM:People?fields=values(Person ID, Remedy Login ID, Profile Status, Full Name, Corporate E-Mail, Assignment Availability)&q=%27Remedy%20Login%20ID%27%3D%20%22${userName}%22`,
           config
         )
-        .then((res) => 
-          {
-          let newArray = res.data.data.map((item) => {
-            return { key: item.id, value: item.attributes.nombreCompleto };
-          });
-          setData(newArray);
+        .then((res) => console.log(res)
 
-        })
+        //   {
+        //   let newArray = res.data.data.map((item) => {
+        //     return { key: item.id, value: item.attributes.nombreCompleto };
+        //   });
+        //   setData(newArray);
+
+        // }
+      )
         .catch(function (error) {
           console.log(error);
         });
