@@ -14,6 +14,7 @@ const Menu = () => {
 
   const [value, setValue] = useState("value");
   const { getItem, setItem } = useAsyncStorage("userName");
+  const [data, setData] = useState([]);
 
   const readItemFromStorage = async () => {
     const item = await getItem();
@@ -41,8 +42,8 @@ const Menu = () => {
       } catch (e) { }
       const token = values[0][1];
       const userName = values[1][1];
-      console.log(token);
-      console.log(userName);
+      // console.log(token);
+      // console.log(userName);
 
       const config = {
         headers: {
@@ -54,7 +55,10 @@ const Menu = () => {
           `${page}/api/arsys/v1.0/entry/CTM:People?fields=values(Person ID, Remedy Login ID, Profile Status, Full Name, Corporate E-Mail, Assignment Availability)&q=%27Remedy%20Login%20ID%27%3D%20%22${userName}%22`,
           config
         )
-        .then((res) => console.log(res)
+        .then((res) => 
+          
+          console.log(res.data.entries[0].values['Full Name']+res.data.entries[0].values['Assignment Availability'])
+  
 
         //   {
         //   let newArray = res.data.data.map((item) => {
