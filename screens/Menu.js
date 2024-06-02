@@ -16,6 +16,8 @@ const Menu = () => {
   const { getItem, setItem } = useAsyncStorage("userName");
   const [data, setData] = useState([]);
 
+  const [usuario, setUsuario] = useState("")
+
   const readItemFromStorage = async () => {
     const item = await getItem();
     setValue(item);
@@ -25,9 +27,46 @@ const Menu = () => {
 
   useEffect(() => {
     readItemFromStorage();
-  }, []);
+    getMultiple = async () => {
+      let values;
+      try {
+        values = await AsyncStorage.multiGet(["token", "userName"]);
+      } catch (e) { }
+      const token = values[0][1];
+      const userName = values[1][1];
 
-  const usuario = value.replace(".", " ");
+      const config = {
+        headers: {
+          Authorization: + token,
+        },
+      };
+      axios
+        .get(
+          `${page}/api/arsys/v1.0/entry/CTM:People?fields=values(Person ID, Remedy Login ID, Profile Status, Full Name, Corporate E-Mail, Assignment Availability)&q=%27Remedy%20Login%20ID%27%3D%20%22${userName}%22`,
+          config
+        )
+        .then((res) => 
+          {
+          console.log(res.data.entries[0].values['Full Name']+res.data.entries[0].values['Assignment Availability'])
+          let tmpUsr = res.data.entries[0].values['Full Name']
+          setUsuario(tmpUsr)
+        }
+
+        //   {
+        //   let newArray = res.data.data.map((item) => {
+        //     return { key: item.id, value: item.attributes.nombreCompleto };
+        //   });
+        //   setData(newArray);
+
+        // }
+      )
+        .catch(function (error) {
+          console.log(error);
+        });
+      
+    };
+    getMultiple();
+  }, []);
 
   const btnSalida = () => {
     AsyncStorage.clear();
@@ -56,10 +95,10 @@ const Menu = () => {
           config
         )
         .then((res) => 
-          
+          {
           console.log(res.data.entries[0].values['Full Name']+res.data.entries[0].values['Assignment Availability'])
   
-
+        }
         //   {
         //   let newArray = res.data.data.map((item) => {
         //     return { key: item.id, value: item.attributes.nombreCompleto };
