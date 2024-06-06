@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import time from "../assets/time.png";
-import llamada from "../assets/llamada.png";
+import on from "../assets/toggle-right.png";
+import off from "../assets/toggle-left.png";
 import salida from "../assets/salida.png";
 import AsyncStorage, {
   useAsyncStorage,
@@ -143,7 +143,7 @@ const Menu = () => {
         onPress={() => habilitarDeshabilitar()}
       >
         <Image
-          source={time}
+          source={on}
           style={{ aspectRatio: 0.6, resizeMode: "contain" }}
         />
         <Text style={styles.texto}>Habilitar o Deshabilitar</Text>
