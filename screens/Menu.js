@@ -16,7 +16,10 @@ const Menu = () => {
   const { getItem, setItem } = useAsyncStorage("userName");
   const [data, setData] = useState([]);
 
-  const [usuario, setUsuario] = useState("")
+  const [usuario, setUsuario] = useState("");
+  const [status, setStatus] = useState();
+
+  const [enable, setEnable] = useState("");
 
   const readItemFromStorage = async () => {
     const item = await getItem();
@@ -47,9 +50,16 @@ const Menu = () => {
         )
         .then((res) => 
           {
-          console.log(res.data.entries[0].values['Full Name']+res.data.entries[0].values['Assignment Availability'])
-          let tmpUsr = res.data.entries[0].values['Full Name']
-          setUsuario(tmpUsr)
+            let tmpUsr = res.data.entries[0].values['Full Name'];
+            let tmpStatus = res.data.entries[0].values['Assignment Availability'];
+
+            console.log(tmpStatus);
+            // setUsuario(tmpUsr)
+            // // setStatus(tmpStatus)
+            if (tmpStatus== 'Yes') {
+              setEnable = true
+            } else setEnable = false
+            // console.log(usuario + status)
         }
 
         //   {
@@ -115,6 +125,8 @@ const Menu = () => {
     getMultiple();
   }
 
+
+
   return (
     <View
       style={{
@@ -142,9 +154,9 @@ const Menu = () => {
         }}
         onPress={() => habilitarDeshabilitar()}
       >
-        <Image
-          source={on}
-          style={{ aspectRatio: 0.6, resizeMode: "contain" }}
+        <Image        
+          source={enable ? on : off}
+          style={{ aspectRatio: 0.3, resizeMode: "contain" }}
         />
         <Text style={styles.texto}>Habilitar o Deshabilitar</Text>
       </TouchableOpacity>
