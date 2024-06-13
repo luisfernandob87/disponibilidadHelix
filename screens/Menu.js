@@ -14,12 +14,10 @@ const Menu = () => {
 
   const [value, setValue] = useState("value");
   const { getItem, setItem } = useAsyncStorage("userName");
-  const [data, setData] = useState([]);
-
   const [usuario, setUsuario] = useState("");
-  const [status, setStatus] = useState();
+  const [enable, setEnable] = useState(false);
+  const [personId, setPersonId] = useState("");
 
-  const [enable, setEnable] = useState("");
 
   const readItemFromStorage = async () => {
     const item = await getItem();
@@ -51,24 +49,23 @@ const Menu = () => {
         .then((res) => 
           {
             let tmpUsr = res.data.entries[0].values['Full Name'];
-            let tmpStatus = res.data.entries[0].values['Assignment Availability'];
+            setUsuario(tmpUsr)
 
-            console.log(tmpStatus);
-            // setUsuario(tmpUsr)
-            // // setStatus(tmpStatus)
-            if (tmpStatus== 'Yes') {
-              setEnable = true
-            } else setEnable = false
-            // console.log(usuario + status)
+            let tmpStatus = (res.data.entries[0].values['Assignment Availability']);
+
+            let tmpPersonId = res.data.entries[0].values['Person ID']
+
+            setPersonId(tmpPersonId)
+
+            // console.log(personId);
+
+
+               if (tmpStatus == 'Yes') {
+                  setEnable(true)
+                }
+            
         }
 
-        //   {
-        //   let newArray = res.data.data.map((item) => {
-        //     return { key: item.id, value: item.attributes.nombreCompleto };
-        //   });
-        //   setData(newArray);
-
-        // }
       )
         .catch(function (error) {
           console.log(error);
@@ -76,7 +73,10 @@ const Menu = () => {
       
     };
     getMultiple();
+
+ 
   }, []);
+  
 
   const btnSalida = () => {
     AsyncStorage.clear();
@@ -91,31 +91,32 @@ const Menu = () => {
       } catch (e) { }
       const token = values[0][1];
       const userName = values[1][1];
-      // console.log(token);
-      // console.log(userName);
 
       const config = {
         headers: {
           Authorization: + token,
         },
       };
+
+      const habilitar = {
+        "values": {
+          "Assignment Availability":"Yes"
+        }
+      }
+
+
       axios
-        .get(
-          `${page}/api/arsys/v1.0/entry/CTM:People?fields=values(Person ID, Remedy Login ID, Profile Status, Full Name, Corporate E-Mail, Assignment Availability)&q=%27Remedy%20Login%20ID%27%3D%20%22${userName}%22`,
-          config
+        .put(
+          // `${page}api/arsys/v1.0/entry/CTM:People/${personId}`, 
+          `${page}api/arsys/v1.0/entry/CTM:People/PPL000000005588`, 
+          config, habilitar
         )
         .then((res) => 
           {
-          console.log(res.data.entries[0].values['Full Name']+res.data.entries[0].values['Assignment Availability'])
+          console.log("ok")
   
         }
-        //   {
-        //   let newArray = res.data.data.map((item) => {
-        //     return { key: item.id, value: item.attributes.nombreCompleto };
-        //   });
-        //   setData(newArray);
 
-        // }
       )
         .catch(function (error) {
           console.log(error);
@@ -151,42 +152,28 @@ const Menu = () => {
           alignItems: "center",
           marginTop: "10%",
           maxHeight: 135,
+          padding: 0,
         }}
         onPress={() => habilitarDeshabilitar()}
       >
         <Image        
           source={enable ? on : off}
-          style={{ aspectRatio: 0.3, resizeMode: "contain" }}
-        />
-        <Text style={styles.texto}>Habilitar o Deshabilitar</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity
-        style={{
-          flex: 4,
-          alignItems: "center",
-          marginTop: "10%",
-          maxHeight: 135,
-        }}
-        onPress={() => navigation.navigate("Llamadas")}
-      >
-        <Image
-          source={llamada}
           style={{ aspectRatio: 0.6, resizeMode: "contain" }}
         />
-        <Text style={styles.texto}>Llamadas de Atención Administrativas</Text>
-      </TouchableOpacity> */}
+        <Text style={styles.texto}>{enable ? 'Deshabilitar' : 'Habilitar'}</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={{
           flex: 4,
           alignItems: "center",
-          marginTop: "20%",
+          marginTop: "50%",
           maxHeight: 135,
         }}
         onPress={btnSalida}
       >
         <Image
           source={salida}
-          style={{ aspectRatio: 0.4, resizeMode: "contain" }}
+          style={{ aspectRatio: 0.6, resizeMode: "contain" }}
         />
         <Text style={styles.texto}>Cerrar Sesión</Text>
       </TouchableOpacity>
