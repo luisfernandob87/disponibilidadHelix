@@ -19,7 +19,7 @@ const Login = () => {
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const data = {
-    userName: usuario,
+    username: usuario,
     password: password,
   };
  
@@ -34,24 +34,26 @@ const Login = () => {
       setLoading(true);
       axios
         .post(
-          `${page}/api/rx/authentication/loginrequest`,
+          `${page}/api/jwt/login`,
           data,  {headers: {
-            'X-Requested-By': 'XMLHttpRequest'
+            'Accept': '*/*',
+            'X-Requested-By': 'XMLHttpRequest',
+            'content-type': 'application/x-www-form-urlencoded'
           }}
         )
         .then((res) => {
-          const usr = ["userName", usuario];
+          const usr = ["username", usuario];
           const tkn = ["token", res.data];
           try {
             AsyncStorage.multiSet([usr, tkn]);
           } catch (error) {
-            console.log("Done.");
+
           }
           navigation.navigate("Menu");
-          console.log(tkn);
-          console.log(usr);
 
-        })
+
+        }
+      )
         .catch(function (error) {
           console.log(error);
           Alert.alert("Contraseña o usuario incorrecto comuniquese con el Administrador");
@@ -59,7 +61,7 @@ const Login = () => {
     }
     setLoading(false);
     setPassword("");
-    // setUsuario("");
+
   };
   return (
     <View style={styles.container}>

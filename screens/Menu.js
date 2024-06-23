@@ -9,11 +9,12 @@ import AsyncStorage, {
 } from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
+
 const Menu = () => {
   const navigation = useNavigation();
 
   const [value, setValue] = useState("value");
-  const { getItem, setItem } = useAsyncStorage("userName");
+  const { getItem, setItem } = useAsyncStorage("username");
   const [usuario, setUsuario] = useState("");
   const [enable, setEnable] = useState(false);
   const [personId, setPersonId] = useState("");
@@ -31,19 +32,19 @@ const Menu = () => {
     getMultiple = async () => {
       let values;
       try {
-        values = await AsyncStorage.multiGet(["token", "userName"]);
+        values = await AsyncStorage.multiGet(["token", "username"]);
       } catch (e) { }
       const token = values[0][1];
-      const userName = values[1][1];
+      const username = values[1][1];
 
       const config = {
         headers: {
-          Authorization: + token,
+          Authorization:  token,
         },
       };
       axios
         .get(
-          `${page}/api/arsys/v1.0/entry/CTM:People?fields=values(Person ID, Remedy Login ID, Profile Status, Full Name, Corporate E-Mail, Assignment Availability)&q=%27Remedy%20Login%20ID%27%3D%20%22${userName}%22`,
+          `${page}/api/arsys/v1.0/entry/CTM:People?fields=values(Person ID, Remedy Login ID, Profile Status, Full Name, Corporate E-Mail, Assignment Availability)&q=%27Remedy%20Login%20ID%27%3D%20%22${username}%22`,
           config
         )
         .then((res) => 
@@ -57,15 +58,11 @@ const Menu = () => {
 
             setPersonId(tmpPersonId)
 
-            // console.log(personId);
-
 
                if (tmpStatus == 'Yes') {
                   setEnable(true)
-                }
-            
+                }          
         }
-
       )
         .catch(function (error) {
           console.log(error);
@@ -74,59 +71,73 @@ const Menu = () => {
     };
     getMultiple();
 
- 
-  }, []);
+  }, [enable]);
   
-
   const btnSalida = () => {
     AsyncStorage.clear();
     navigation.navigate("Login");
   };
 
   const habilitarDeshabilitar = () => {
+    readItemFromStorage();
     getMultiple = async () => {
       let values;
       try {
-        values = await AsyncStorage.multiGet(["token", "userName"]);
+        values = await AsyncStorage.multiGet(["token", "username"]);
       } catch (e) { }
       const token = values[0][1];
-      const userName = values[1][1];
 
       const config = {
         headers: {
-          Authorization: + token,
+          "Content-Type": "application/json",
+          Authorization: token,
         },
       };
 
-      const habilitar = {
+      const habilitar = JSON.stringify({
         "values": {
           "Assignment Availability":"Yes"
         }
-      }
+      })
+      const deshabilitar = JSON.stringify({
+        "values": {
+          "Assignment Availability":"No"
+        }
+      })
 
-
-      axios
-        .put(
-          // `${page}api/arsys/v1.0/entry/CTM:People/${personId}`, 
-          `${page}api/arsys/v1.0/entry/CTM:People/PPL000000005588`, 
-          config, habilitar
+      if (enable == false) {
+        axios
+        .put(`${page}/api/arsys/v1.0/entry/CTM:People/${personId}`,
+         habilitar, config
         )
         .then((res) => 
           {
-          console.log("ok")
-  
+          console.log("ok"+res)
+          setEnable(true)
         }
-
       )
         .catch(function (error) {
           console.log(error);
         });
-      
+      } else {
+        axios
+        .put(`${page}/api/arsys/v1.0/entry/CTM:People/${personId}`,
+         deshabilitar, config
+        )
+        .then((res) => 
+          {
+          console.log("ok"+res)
+          setEnable(false)
+        }
+      )
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
+     
     };
     getMultiple();
   }
-
-
 
   return (
     <View

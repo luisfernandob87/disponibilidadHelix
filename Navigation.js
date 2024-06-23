@@ -4,8 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import Login from "./screens/Login";
 import Menu from "./screens/Menu";
-import EntradasTarde from "./screens/EntradasTarde";
-import Llamadas from "./screens/Llamadas";
 
 const AddStack = createNativeStackNavigator();
 
@@ -25,24 +23,6 @@ function MyStack() {
         component={Menu}
         options={{
           headerShown: false,
-        }}
-      />
-      <AddStack.Screen
-        name="Llamadas"
-        component={Llamadas}
-        options={{
-          title: "Registrar Llamada de Atención",
-          headerTitleAlign: "center",
-          headerTintColor: "#1976d2",
-        }}
-      />
-      <AddStack.Screen
-        name="EntradasTarde"
-        component={EntradasTarde}
-        options={{
-          title: "Habilitar o Deshabilitar",
-          headerTitleAlign: "center",
-          headerTintColor: "#1976d2",
         }}
       />
     </AddStack.Navigator>
